@@ -1,0 +1,25 @@
+{
+  "Angular HTTP interceptor with optional blocks": {
+    "scope": "typescript",
+    "description": "Functional HttpInterceptorFn. Each [optional] block is a selected placeholder: press Delete to remove it, Tab to skip it.",
+    "prefix": "ngInterceptorOpt",
+    "body": [
+      "import { HttpInterceptorFn } from '@angular/common/http';",
+      "${2:import { catchError, retry, throwError \\} from 'rxjs';}",
+      "",
+      "export const ${1:auth}Interceptor: HttpInterceptorFn = (req, next) => {",
+      "\t${3:// [optional] pass through requests to other origins",
+      "\tif (new URL(req.url, location.origin).origin !== '${4:https://api.example.com}') return next(req);}",
+      "\t${5:// [optional] attach auth header",
+      "\treq = req.clone({ setHeaders: { Authorization: 'Bearer ${6:token}' \\} \\});}",
+      "",
+      "\treturn next(req).pipe(",
+      "\t\t${7:// [optional] retry transient errors",
+      "\t\tretry(2),}",
+      "\t\t${8:// [optional] map errors",
+      "\t\tcatchError((error: unknown) => throwError(() => ${9:error})),}",
+      "\t);",
+      "};$0"
+    ]
+  }
+}

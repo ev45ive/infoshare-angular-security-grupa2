@@ -28,6 +28,7 @@ yarn-error.log
 !.vscode/extensions.json
 !.vscode/mcp.json
 .history/*
+!.vscode/angular-interceptor.code-snippets
 
 # Miscellaneous
 /.angular/cache

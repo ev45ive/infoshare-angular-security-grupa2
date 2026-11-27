@@ -58,3 +58,23 @@ bootstrapApplication(AppComponent, {
     ),
   ],
 }).catch((error: unknown) => console.error(error));
+
+
+// ngInterceptorOpt
+import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError, retry, throwError } from 'rxjs';
+
+// TODO JSDOC - Code Marketing (visiblity!)
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // [optional] pass through requests to other origins
+  if (new URL(req.url, location.origin).origin !== 'https://api.example.com') return next(req);
+  // [optional] attach auth header
+  req = req.clone({ setHeaders: { Authorization: 'Bearer token' } });
+
+  return next(req).pipe(
+    // [optional] retry transient errors
+    retry(2),
+    // [optional] map errors
+    catchError((error: unknown) => throwError(() => error)),
+  );
+};
