@@ -1,0 +1,9 @@
+{
+  "name": "angular-security-content-policy-labs",
+  "private": true,
+  "scripts": {
+    "build": "ng build",
+    "typecheck:server": "tsc --project tsconfig.server.json",
+    "lab": "npm run build && concurrently -k -n WEB -c cyan \"tsx server.ts\""
+  }
+}
