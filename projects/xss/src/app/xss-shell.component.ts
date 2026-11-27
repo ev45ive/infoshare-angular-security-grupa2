@@ -18,7 +18,7 @@ const cmsFixture = {
     <main class="min-h-screen bg-slate-50 text-slate-900">
       <header class="border-b border-slate-200 bg-white">
         <div class="mx-auto max-w-6xl px-5 py-6">
-          <nav><a href="/resource-url" class="text-indigo-700 underline">Link i osadzony zasób</a></nav>
+          <nav class="flex gap-4"><a href="/resource-url" class="text-indigo-700 underline">Link i osadzony zasób</a><a href="/directives" class="text-indigo-700 underline">Dyrektywy i komponent</a></nav>
           <p class="text-xs font-semibold uppercase tracking-widest text-indigo-700">Angular security lab · L0.1</p>
           <h1 class="mt-1 text-2xl font-bold">Treść CMS i granice renderowania</h1>
           <p class="mt-2 max-w-3xl text-sm text-slate-600">Porównaj, jak ta sama odpowiedź API zachowuje się jako tekst, HTML sanitizowany przez Angulara, zapis do natywnego DOM i wartość jawnie oznaczona jako zaufana.</p>

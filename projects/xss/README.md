@@ -14,6 +14,8 @@ Następnie otwórz adres aplikacji wskazany przez Angular CLI. Lab nie wymaga os
 
 Drugi samodzielny lab o URL i resource URL znajduje się pod http://localhost:4200/resource-url.
 
+Lab o dyrektywach i komponentach znajduje się pod http://localhost:4200/directives. Pokazuje dwie dyrektywy przypięte do zwykłych elementów: jedna zmienia element przez `ElementRef`, druga deklaruje zmiany w `host`. Obok nich jest komponent z własnym template. Demo obejmuje zmiany elementu, klas, stylów, zdarzeń i wywołania metod z template.
+
 ## Przebieg
 
 1. Porównaj treść widoczną jako tekst z HTML-em renderowanym przez binding Angulara.
