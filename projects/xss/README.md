@@ -22,3 +22,13 @@ Drugi samodzielny lab o URL i resource URL znajduje się pod http://localhost:42
 4. Zmień przygotowane pole `body`, odśwież aplikację i ponownie prześledź drogę danych.
 
 Zmiany wykonywane w fixture służą obserwacji lokalnego przepływu. Samo zapisanie wartości w fixture nie oznacza stored XSS.
+
+## Dodatkowe scenariusze
+
+- **HTML zapisany przez autora:** zapisz treść w `localStorage`, odśwież stronę i odczytaj ją do natywnego DOM. Porównaj wynik z bindingiem Angulara. Przycisk usuwania czyści zapis laboratorium.
+- **Wspólny pipe:** porównaj zwykły binding HTML z pipe, który nadaje wejściu `SafeHtml` przez `bypassSecurityTrustHtml`.
+- **Widget:** lokalna atrapa widgetu zapisuje przekazany HTML do DOM; porównaj surową treść z oczyszczoną przed przekazaniem.
+- **Zmiana po sanityzacji:** do oczyszczonego HTML dołącz nowy fragment, a następnie porównaj bezpośredni zapis z ponowną sanityzacją całości.
+- **Resource URL:** porównaj dokładny origin z kontrolą tekstową dla różnych schematów, portów i nazw hosta na stronie `/resource-url`.
+
+Każdy przykład HTML zawiera edytowalny payload i komunikat pokazujący wykonanie handlera. Przy ponownym teście widgetu i zmiany po sanityzacji użyj najpierw wariantu surowego, a potem oczyszczonego.

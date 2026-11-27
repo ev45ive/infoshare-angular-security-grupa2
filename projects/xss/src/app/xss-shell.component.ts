@@ -1,5 +1,6 @@
 import { Component, ElementRef, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AdditionalScenariosComponent } from './additional-scenarios.component';
 
 const cmsFixture = {
   id: 'article-104',
@@ -12,6 +13,7 @@ const cmsFixture = {
 @Component({
   selector: 'app-xss-shell',
   standalone: true,
+  imports: [AdditionalScenariosComponent],
   template: `
     <main class="min-h-screen bg-slate-50 text-slate-900">
       <header class="border-b border-slate-200 bg-white">
@@ -77,17 +79,18 @@ const cmsFixture = {
             </ol>
             <p class="text-sm text-slate-700">XSS zachodzi, gdy dane kontrolowane przez atakującego powodują wykonanie kodu w kontekście dokumentu. Sam fakt sparsowania HTML nie dowodzi wykonania; sprawdź rzeczywisty skutek i dokładny sink.</p>
           </section>
+          <app-additional-scenarios />
         </div>
 
         <aside class="self-start border-l border-slate-200 pl-5 text-sm text-slate-700">
           <h2 class="font-semibold">Zakres tego wycinka</h2>
           <p class="mt-2">Lab pokazuje ścieżkę CMS → API → Angular/DOM → parser przeglądarki oraz różnicę między sanitizacją i deklaracją zaufania.</p>
-          <h3 class="mt-5 font-semibold">TODO — dodatkowe scenariusze</h3>
+          <h3 class="mt-5 font-semibold">Dodatkowe scenariusze</h3>
           <ul class="mt-2 list-disc space-y-1 pl-5">
-            <li>HTML zapisany przez autora</li>
-            <li>wspólny pipe nadający zaufanie</li>
-            <li>zewnętrzny widget zapisujący do DOM</li>
-            <li>zmiana treści po sanityzacji</li>
+            <li><a href="#stored">HTML zapisany przez autora</a></li>
+            <li><a href="#pipe">wspólny pipe nadający zaufanie</a></li>
+            <li><a href="#widget">widget zapisujący do DOM</a></li>
+            <li><a href="#mutation">zmiana treści po sanityzacji</a></li>
           </ul>
         </aside>
       </div>
