@@ -71,7 +71,7 @@ app.get('/{*path}', async (req: Request, res: Response, next: NextFunction) => {
   } else if (mode === 'tt-enforce') {
     res.setHeader('Content-Security-Policy', "require-trusted-types-for 'script'; report-uri /csp-report");
   } else if (mode === 'tt-default') {
-    res.setHeader('Content-Security-Policy', "require-trusted-types-for 'script'; trusted-types default angular#unsafe-bypass angular#unsafe-jit; report-uri /csp-report");
+    res.setHeader('Content-Security-Policy', "require-trusted-types-for 'script'; trusted-types default angular angular#unsafe-bypass angular#unsafe-jit; report-uri /csp-report");
   } else if (mode === 'report') {
     res.setHeader('Content-Security-Policy-Report-Only', `script-src 'self' 'nonce-${nonce}'; style-src 'self' 'nonce-${nonce}'; object-src 'none'; base-uri 'self'; report-uri /csp-report`);
   } else if (mode === 'enforce' || mode === 'nonce-reuse') {
@@ -91,7 +91,7 @@ app.get('/{*path}', async (req: Request, res: Response, next: NextFunction) => {
     html = html.replace('__LAB_NONCE__', nonce)
       .replace(/<script\b(?![^>]*\bnonce=)/gi, `<script nonce="${nonce}"`)
       .replace(/<style\b(?![^>]*\bnonce=)/gi, `<style nonce="${nonce}"`)
-      .replace('</body>', (mode === 'tt-default' ? '<script nonce="' + nonce + '">trustedTypes.createPolicy("default", { createHTML: (value) => value });</script>' : '') + (mode === 'hash' ? '<script>window.__hashProbe = "executed";</script>' : '<script>window.__policyProbe = "executed";</script>') + '<script nonce="' + nonce + '">window.__nonceProbe = "executed";</script></body>');
+      .replace('</body>', (mode === 'tt-default' ? '<script nonce="' + nonce + '">trustedTypes.createPolicy("default", { createHTML: (value) => { console.log("default: ",value); return value} });</script>' : '') + (mode === 'hash' ? '<script>window.__hashProbe = "executed";</script>' : '<script>window.__policyProbe = "executed";</script>') + '<script nonce="' + nonce + '">window.__nonceProbe = "executed";</script></body>');
     res.type('html').send(html);
   } catch (error) {
     next(error);
