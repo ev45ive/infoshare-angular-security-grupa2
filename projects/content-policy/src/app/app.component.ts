@@ -1,4 +1,4 @@
-import { Component, inject, Sanitizer, SecurityContext, signal } from '@angular/core';
+import { Component, CSP_NONCE, inject, INJECTOR, Sanitizer, SecurityContext, signal } from '@angular/core';
 
 type PolicyMode =
   | 'off'
@@ -104,6 +104,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
           pobrane bajty kontrolowanego zasobu z oczekiwanym digestem. Nazwa fingerprintowana może
           pomagać w cache, ale sama nie porównuje bajtów.
         </p>
+
+        <div class="result"> angular CSP_NONCE: {{nonce}} </div>
         <ol>
           <li>
             Ustaw <code>?mode=enforce</code>. W Network wybierz dokument HTML i porównaj nonce w
@@ -286,6 +288,8 @@ export class AppComponent {
   extraMessage = signal('Dodatkowe próby nieuruchomione.');
 
   angularHtml = signal<SafeHtml | string>('');
+
+  nonce = inject(CSP_NONCE)
 
   sanitizer = inject(DomSanitizer);
 

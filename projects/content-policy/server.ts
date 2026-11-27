@@ -88,9 +88,11 @@ app.get('/{*path}', async (req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
     let html = await readFile(path.join(browserRoot, 'index.html'), 'utf8');
-    html = html.replace('__LAB_NONCE__', nonce)
+    html = html.replace(/__LAB_NONCE__/g, nonce)
       .replace(/<script\b(?![^>]*\bnonce=)/gi, `<script nonce="${nonce}"`)
       .replace(/<style\b(?![^>]*\bnonce=)/gi, `<style nonce="${nonce}"`)
+      // .replace(/\s+nonce"/gi, ` nonce="${nonce}"`)
+      .replace(/ngCspNonce="__LAB_NONCE__"/gi, `ngCspNonce="${nonce}"`)
       .replace('</body>', (mode === 'tt-default' ? '<script nonce="' + nonce + '">trustedTypes.createPolicy("default", { createHTML: (value) => { console.log("default: ",value); return value} });</script>' : '') + (mode === 'hash' ? '<script>window.__hashProbe = "executed";</script>' : '<script>window.__policyProbe = "executed";</script>') + '<script nonce="' + nonce + '">window.__nonceProbe = "executed";</script></body>');
     res.type('html').send(html);
   } catch (error) {
