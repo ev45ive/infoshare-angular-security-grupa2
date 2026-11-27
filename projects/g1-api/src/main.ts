@@ -3,6 +3,7 @@ import { AppComponent } from './app/app.component';
 import {
   provideHttpClient,
   withInterceptors,
+  withNoXsrfProtection,
   withXsrfConfiguration,
   type HttpInterceptorFn,
 } from '@angular/common/http';
@@ -21,6 +22,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(
       withInterceptors([demoBearer]),
       withXsrfConfiguration({ cookieName: 'g1_angular_xsrf', headerName: 'X-XSRF-TOKEN' }),
+      withNoXsrfProtection()
     ),
   ],
 }).catch((error: unknown) => console.error(error));
