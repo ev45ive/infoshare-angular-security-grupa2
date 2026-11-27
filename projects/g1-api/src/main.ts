@@ -1,6 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import {
+  HttpContext,
+  HttpContextToken,
   provideHttpClient,
   withInterceptors,
   withNoXsrfProtection,
@@ -14,8 +16,12 @@ const demoBearer: HttpInterceptorFn = (req, next) => {
   if (target.origin === 'http://127.0.0.1:4301' && target.pathname === '/lab/interceptor/trusted') {
     return next(req.clone({ setHeaders: { Authorization: 'Bearer fictional-demo-token' } }));
   }
+
   return next(req);
 };
+
+
+
 
 bootstrapApplication(AppComponent, {
   providers: [

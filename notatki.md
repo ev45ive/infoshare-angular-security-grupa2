@@ -43,3 +43,21 @@ type NotFood = Food & 'bike';
   { path: '', loadChildren: () => fetch('separate-bundler') },
   onCLick() {  await import('separate-bundler').MojSuperComponent }
 ```
+
+
+# Interceptors + request  = HttpContext + HttpContextToken
+
+```ts
+const ServerContext = new HttpContextToken(() => 'only server A')
+
+const serverA = new HttpContext().set(ServerContext,'A')
+                              // .set('innea')
+
+// Cross Package import boundary: 
+import ServerContext // ERROR~
+import serverA // OK
+
+http.get('',{ context: serverA })
+http.get('',{ context: serverB })
+
+```

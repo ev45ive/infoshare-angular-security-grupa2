@@ -12,6 +12,7 @@ import {
   HttpBoundaryExperiment,
   StorageExperiment,
 } from './api-boundary-experiments.component';
+import { provideHttpClient, withRequestsMadeViaParent } from '@angular/common/http';
 
 @Component({
   selector: 'experiments-index',
