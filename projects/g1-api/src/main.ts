@@ -1,6 +1,11 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
-import { provideHttpClient, withInterceptors, withXsrfConfiguration, type HttpInterceptorFn } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  withXsrfConfiguration,
+  type HttpInterceptorFn,
+} from '@angular/common/http';
 
 // Jedyny endpoint, do którego interceptor dołącza fikcyjny token.
 const demoBearer: HttpInterceptorFn = (req, next) => {
@@ -11,4 +16,11 @@ const demoBearer: HttpInterceptorFn = (req, next) => {
   return next(req);
 };
 
-bootstrapApplication(AppComponent, { providers: [provideHttpClient(withInterceptors([demoBearer]), withXsrfConfiguration({ cookieName: 'g1_angular_xsrf', headerName: 'X-XSRF-TOKEN' }))] }).catch((error: unknown) => console.error(error));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideHttpClient(
+      withInterceptors([demoBearer]),
+      withXsrfConfiguration({ cookieName: 'g1_angular_xsrf', headerName: 'X-XSRF-TOKEN' }),
+    ),
+  ],
+}).catch((error: unknown) => console.error(error));
