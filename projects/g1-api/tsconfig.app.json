@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "rootDir": "./src",
+    "target": "ES2022",
+    "module": "preserve",
+    "skipLibCheck": true,
+    "strict": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
+}

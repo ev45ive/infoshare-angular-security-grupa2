@@ -1,0 +1,5 @@
+[
+  { "time": "2026-11-26T09:14:00Z", "component": "dependency-monitor", "event": "advisory-match", "version": "preview-renderer@2.4.1", "artifact": "web-2026.11.26.3", "correlation": "evt-demo-104", "credentialExposure": "unknown" },
+  { "time": "2026-11-26T09:18:00Z", "component": "release-control", "event": "deployment-paused", "version": "web-2026.11.26.3", "artifact": "web-2026.11.26.3", "correlation": "evt-demo-105", "credentialExposure": "not-assessed" },
+  { "time": "2026-11-26T09:23:00Z", "component": "api", "event": "cross-tenant-denial", "version": "api-2026.11.26.1", "artifact": "api-2026.11.26.1", "correlation": "evt-demo-106", "credentialExposure": "not-applicable" }
+]

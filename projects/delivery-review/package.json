@@ -1,0 +1,8 @@
+{
+  "name": "delivery-review",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p artifact/tsconfig.json",
+    "lab": "npm run build && concurrently -k -n PORTAL,WIDGET -c cyan,magenta \"tsx server.ts\" \"tsx widget.ts\""
+  }
+}

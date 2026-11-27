@@ -1,0 +1,4 @@
+{
+  "pullRequest": { "source": "untrusted-pr", "permissions": "read", "lifecycleScriptsEnabled": true, "cacheKey": "deps-pr", "artifact": "preview-pr", "provenanceVerified": false },
+  "release": { "source": "trusted-merge", "permissions": "write", "lifecycleScriptsEnabled": false, "cacheKey": "deps-release", "artifact": "preview-release", "provenanceVerified": true }
+}

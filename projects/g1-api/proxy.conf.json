@@ -1,0 +1,4 @@
+{
+  "/lab/angular-xsrf": { "target": "http://127.0.0.1:4301", "secure": false },
+  "/lab/interceptor": { "target": "http://127.0.0.1:4301", "secure": false }
+}

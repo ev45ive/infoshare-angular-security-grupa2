@@ -1,0 +1,9 @@
+{
+  "name": "angular-security-g1-api",
+  "private": true,
+  "scripts": {
+    "build": "ng build",
+    "typecheck:server": "tsc --project tsconfig.server.json",
+    "lab": "npm run build && concurrently -k -n APP,API -c cyan,magenta \"ng serve --host 127.0.0.1 --port 4300 --proxy-config proxy.conf.json\" \"tsx server/api.ts\""
+  }
+}

@@ -1,0 +1,7 @@
+import { Component } from '@angular/core';
+
+@Component({ selector: 'site-explanation', standalone: true, host: { style: 'display: block' }, template: `
+  <p class="text-xs font-semibold uppercase tracking-widest text-emerald-300">Wyjaśnienie</p><h2 class="mt-2 text-lg font-semibold">Trzy osie porównania</h2>
+  <dl class="mt-4 space-y-4 text-sm"><div><dt class="font-semibold text-slate-200">Origin</dt><dd class="mt-1 leading-6 text-slate-400">Schemat + host + port. Inny port oznacza inny origin; dlatego fetch potrzebuje CORS.</dd></div><div><dt class="font-semibold text-slate-200">Site</dt><dd class="mt-1 leading-6 text-slate-400">Kontekst używany m.in. przez SameSite. Port nie odróżnia localhost:4200 od localhost:4302; localhost i 127.0.0.1 są różnymi hostami.</dd></div><div><dt class="font-semibold text-slate-200">Cookie scope</dt><dd class="mt-1 leading-6 text-slate-400">Cookie bez atrybutu Domain jest host-only, ale port nie stanowi granicy. Nazwy cookie są odrębne, aby można było zobaczyć każde ustawienie.</dd></div><div><dt class="font-semibold text-slate-200">SameSite=None; Secure</dt><dd class="mt-1 leading-6 text-slate-400">None pozwala na kontekst cross-site, ale wymaga Secure. Zachowanie Secure na loopback przez HTTP może różnić się między przeglądarkami. Sprawdź cookie w narzędziach przeglądarki i nie traktuj wyniku jako uniwersalnego.</dd></div></dl>
+` })
+export class SiteExplanationComponent {}

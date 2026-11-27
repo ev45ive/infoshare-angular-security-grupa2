@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>G3 — review i delivery podglądu dokumentu</title>
+  <link rel="stylesheet" href="/assets/lab.css">
+  <script type="module" src="/assets/lab-ui.js"></script>
+</head>
+<body>
+<header>
+  <p class="eyebrow">Angular Security · G3</p>
+  <h1>Review i delivery podglądu dokumentu</h1>
+  <p>Jeden mały przepływ: wybór dokumentu, decyzja API, tekst podglądu i artefakt klienta. Każdy panel prowadzi przez obserwację, wskazany kod i zakres dowodu.</p>
+</header>
+<nav aria-label="Demonstracje">
+  <button data-tab="l31" aria-current="true">L3.1 Przepływ</button>
+  <button data-tab="l32" aria-current="false">L3.2 Review diffu</button>
+  <button data-tab="l33" aria-current="false">L3.3 CI</button>
+  <button data-tab="e31" aria-current="false">E3.1 Artefakt</button>
+  <button data-tab="l34" aria-current="false">L3.4 Delivery i reakcja</button>
+</nav>
+<main>
+  <section data-panel="l31">
+    <p class="eyebrow">Lab prowadzony · 1/4</p>
+    <h2>L3.1 — Od przepływu do testu</h2>
+    <p><strong>Cel:</strong> powiązać wymaganie „Anna z organizacji A czyta dokument A” z kontrolą i dowodem. API, a nie ukryty przycisk, egzekwuje granicę tenantów.</p>
+    <ol class="steps">
+      <li><strong>Przepływ.</strong> Anna wybiera <code>doc_42</code>; klient wysyła ID do API; API sprawdza tenant; klient pokazuje opis jako tekst.</li>
+      <li><strong>Kontrola i właściciel.</strong> W tej fixture API mapuje demonstracyjnego aktora na tenant i sprawdza zasób. Aktor jest symulowany nagłówkiem <code>X-Demo-Actor</code>; rzeczywiste API powinno ustalać tożsamość ze zweryfikowanej sesji lub tokenu. Właściciel kontroli: zespół API. Frontend odpowiada za walidację wiadomości i bezpieczny sink.</li>
+      <li><strong>Test pozytywny.</strong> Wybierz własny dokument. Wynik zawiera dane dokumentu A.</li>
+      <li><strong>Test negatywny.</strong> Anna żąda dokumentu B. API zwraca 404 bez treści dokumentu; log serwera zapisuje odmowę bez opisu dokumentu.</li>
+    </ol>
+    <p class="file-ref">Kod źródłowy: <code>server.ts</code> — endpoint <code>/api/documents/:id</code>; fixture przepływu: <code>fixtures/preview-after.ts</code>.</p>
+    <div class="actions"><button id="read-own">Pobierz doc_42 jako Anna</button><button id="read-other">Pobierz doc_84 jako Anna</button></div>
+    <p class="observation">Obserwuj wynik poniżej i terminal serwera: <code>decision=allow</code> albo <code>decision=deny</code>. Odpowiedź 404 nie dowodzi sama w sobie, że żadna operacja uboczna nie zaszła; tutaj endpoint jest tylko odczytem.</p>
+    <h3>Granica i ryzyko resztkowe: STRIDE</h3>
+    <p>Podszycie pod aktora, naruszenie integralności wiadomości i ujawnienie dokumentu prowadzą do różnych kontroli. Symulowany nagłówek aktora zastępuje rzeczywiste uwierzytelnienie; granica zaufania przesuwa się między kontrolowanym widgetem, portalem i API. Autoryzacja obiektu nie naprawia błędnego uwierzytelniania ani nie usuwa już ujawnionych danych.</p>
+  </section>
+
+  <section data-panel="l32" hidden>
+    <p class="eyebrow">Lab prowadzony · 2/4</p>
+    <h2>L3.2 — Review zmiany podglądu</h2>
+    <p>Przejdź od źródła do sinka. Pokazany diff jest małym fixture kodu TypeScript, a przyciski poniżej dowodzą osobno serwerowej decyzji dostępu.</p>
+    <ol class="steps">
+      <li><strong>Wejście:</strong> <code>event.data.id</code> pochodzi z wiadomości widgetu; sprawdź nadawcę przez <code>origin</code> i <code>source</code> oraz waliduj schemat i format ID.</li>
+      <li><strong>Decyzja:</strong> koduje się segment URL, ale API nadal autoryzuje obiekt po tenantcie. Kodowanie ID nie jest autoryzacją.</li>
+      <li><strong>Użycie:</strong> zwykły opis trafia do <code>textContent</code>, nie <code>innerHTML</code>. Uruchom oba żądania poniżej i porównaj dane oraz log.</li>
+      <li><strong>Zmiana:</strong> w <code>server.ts</code> zmień warunek <code>permitted</code>, uruchom serwer ponownie i powtórz odmowę. Następnie przywróć warunek. Statyczny diff i lokalna odpowiedź nie dowodzą działania produkcyjnego widgetu ani CDN.</li>
+    </ol>
+    <div class="code-grid">
+      <article><h3>Przed review</h3><p class="file-ref"><code>fixtures/preview-before.ts</code></p><pre><code>window.addEventListener('message', async event =&gt; {
+  const response = await fetch(`/api/documents/${event.data?.id}`);
+  const document = await response.json();
+  preview.innerHTML = document.description;
+});</code></pre></article>
+      <article><h3>Po review</h3><p class="file-ref"><code>fixtures/preview-after.ts</code></p><pre><code>if (event.origin !== trustedOrigin) return;
+if (event.source !== trustedFrame) return;
+if (!isDocumentSelected(event.data)) return;
+const response = await fetch(`/api/documents/${encodeURIComponent(id)}`);
+if (!response.ok) return;
+preview.textContent = document.description;</code></pre></article>
+    </div>
+    <p class="callout">W fixture po zmianie sprawdź też przypadek negatywny. Sama poprawa sinka nie naprawia IDOR; sama autoryzacja API nie zabezpiecza kontekstu HTML.</p>
+    <div class="actions"><button data-read="own">Sprawdź ścieżkę dozwoloną</button><button data-read="other">Sprawdź odmowę API</button></div>
+    <h3>Wiadomość z widgetu i identyfikator obiektu</h3>
+    <p>Porównaj dwie ramki tego samego originu: tylko pierwsza jest wskazaną instancją. Wyślij z niej poprawne oraz błędne dane, a następnie wyślij poprawne dane z drugiej ramki. Odbiorca sprawdza <code>origin</code>, <code>source</code> i format, zanim wyśle żądanie do API.</p>
+    <iframe title="Zaufany widget" id="review-widget" src="http://127.0.0.1:4308/"></iframe>
+    <iframe title="Drugi widget tego samego originu" id="review-other" src="http://127.0.0.1:4308/"></iframe>
+    <p id="widget-status" role="status">Oczekiwanie na wiadomość.</p>
+    <p>Porównaj niedostateczną i chronioną kontrolę obiektu dla tego samego ID.</p>
+    <div class="actions"><button id="review-insecure">Niezabezpieczone API: cudzy dokument</button><button data-read="other">Chronione API: cudzy dokument</button></div>
+    <h3>Kontekst renderowania i cel URL</h3>
+    <p>Ten sam kontrolowany tekst można wstawić jako tekst lub jako HTML. Porównaj wynik i DOM; CSP również wpływa na możliwość wykonania handlerów. URL parsujemy i porównujemy origin przed użyciem, a nie wyszukujemy fragmentu w ciągu.</p>
+    <div class="actions"><button id="render-text">Wstaw jako tekst</button><button id="render-html">Wstaw jako HTML</button></div><div id="render-preview"></div>
+    <label>Cel URL <input id="review-url" value="https://documents.example/preview"></label><button id="review-url-check">Sprawdź cel</button><p id="review-url-result"></p>
+  </section>
+
+  <section data-panel="l33" hidden>
+    <p class="eyebrow">Lab prowadzony · 3/4</p>
+    <h2>L3.3 — Granice CI i zależności</h2>
+    <p>Fixture przedstawia workflow pull requestu i przypiętą zależność. Lokalna demonstracja odczytuje pliki i raportuje ich jawne właściwości; nie wykonuje YAML, instalacji ani pipeline’u.</p>
+    <ol class="steps">
+      <li>Otwórz <code>fixtures/dependencies.lock.json</code>: wersja i pole integralności pomagają odtworzyć wybór paczki, ale nie dowodzą, że paczka lub rejestr są bezpieczne.</li>
+      <li>Otwórz <code>fixtures/ci-workflow.yml</code>: PR ma <code>contents: read</code>, bez sekretu deployu i bez prawa zapisu.</li>
+      <li>Uruchom symulację. Sprawdź także lifecycle scripts: fixture wykonuje jako tekst tylko statyczną kontrolę i pokazuje, że <code>npm ci</code> nie deklaruje <code>--ignore-scripts</code>.</li>
+      <li>Zmień w fixture <code>contents: read</code> na <code>contents: write</code> i ponów inspekcję. Porównaj wynik, a potem przywróć plik. Właściciel CI ocenia również runner, źródło kodu i uprawnienia.</li>
+      <li>Sprawdź zależność przechodnią i jej deklarowany skrypt instalacyjny w lockfile. W <code>fixtures/ci-boundaries.json</code> porównaj PR i release; zmień klucze cache albo nazwę artefaktu na takie same i uruchom ponownie inspekcję. Cofnij zmianę. Pole provenance jest deklaracją fixture, nie weryfikacją kryptograficzną.</li>
+    </ol>
+    <p class="file-ref">Miejsca review: <code>fixtures/ci-workflow.yml</code> i <code>fixtures/dependencies.lock.json</code>. Bez prawdziwych sekretów, runnera ani CI.</p>
+    <button id="run-ci">Przeprowadź lokalną inspekcję fixture</button>
+  </section>
+
+  <section data-panel="e31" hidden>
+    <p class="eyebrow">Eksperyment automatyczny</p>
+    <h2>E3.1 — Co zawiera artefakt klienta</h2>
+    <p>Kompilator TypeScript przygotowuje mały klientowy artefakt ze źródła i source mapą. Po wejściu na ekran serwer sprawdza te trzy pliki automatycznie; nie trzeba uruchamiać akcji w UI.</p>
+    <p id="experiment-summary" class="callout" aria-live="polite">Skanowanie lokalnych fixture…</p>
+    <ol class="steps">
+      <li>Źródło: <code>artifact/src/client-config.ts</code>.</li>
+      <li>Bundle: <code>artifact/browser/client-config.js</code>.</li>
+      <li>Source map: <code>artifact/browser/client-config.js.map</code>.</li>
+      <li>Porównaj wynik: wpisana do klienta wartość jest publiczna; mapa ujawnia powiązanie z kodem źródłowym. Wartość jest markerem fikcyjnym, nie sekretem.</li>
+    </ol>
+    <p class="file-ref">Build: <code>npm run build</code> w katalogu projektu. Eksperyment wykrywa tylko marker jawnie zapisany w tych fixture; brak trafienia nie jest skanerem sekretów.</p>
+  </section>
+
+  <section data-panel="l34" hidden>
+    <p class="eyebrow">Lab prowadzony · 4/4</p>
+    <h2>L3.4 — Od konfiguracji do odpowiedzi i reakcji</h2>
+    <p>Konfiguracja serwera ma znaczenie dopiero w odpowiedzi odebranej przez klienta. Sprawdź lokalny HTML, JSON API oraz odmowę; następnie prześledź przygotowany incydent i różnicę między rollbackiem a rotacją.</p>
+    <ol class="steps">
+      <li>Sprawdź HTML: odpowiedź zawiera CSP i polityki przeglądarkowe ustawione przez serwer HTML.</li>
+      <li>Sprawdź API i 404: obserwuj <code>Cache-Control</code>, typ treści i zachowanie odmowy. Test dotyczy wyłącznie tego lokalnego serwera.</li>
+      <li>W <code>server.ts</code> zmień <code>Referrer-Policy</code>, uruchom serwer ponownie i porównaj faktyczną odpowiedź; następnie przywróć konfigurację.</li>
+      <li>Przejrzyj przygotowane zdarzenia: alert zależności nie rozstrzyga, czy artefakt wykonał kod ani czy credential został skopiowany.</li>
+      <li>Przywróć stan symulacji, wykonaj rollback i sprawdź stan fikcyjnego credentiala. Potem wykonaj osobno rotację. Rollback artefaktu sam nie unieważnia skopiowanego credentiala.</li>
+    </ol>
+    <p class="file-ref">Konfiguracja i odpowiedzi: <code>server.ts</code>. Zdarzenia: <code>fixtures/incident-events.json</code>. Właściciele decyzji w symulacji: release control oraz operator credentials.</p>
+    <div class="actions"><button id="inspect-html">Pobierz nagłówki HTML</button><button id="inspect-api">Pobierz JSON API</button><button id="inspect-denial">Sprawdź negatywną odpowiedź</button></div>
+    <div class="actions"><button data-response="reset">Przywróć stan symulacji</button><button data-response="pause">Wstrzymaj kolejne wdrożenia</button><button data-response="rollback">Wycofaj artefakt</button><button data-response="rotate">Rotuj fikcyjne poświadczenie</button><button id="show-events">Pokaż oś zdarzeń i stan</button></div>
+    <p class="callout">Wszystkie akcje zmieniają wyłącznie stan pamięci tego procesu. Nie ma prawdziwego deploymentu ani credentials.</p>
+    <h3>Odpowiedź po przejściu przez proxy</h3>
+    <p>Porównaj nagłówki produkcyjnej i staging odpowiedzi, a następnie wariant, w którym kontrolowana atrapa proxy usuwa CSP. Spróbuj również odpowiedzi błędu. Obserwuj nagłówki w Network i log; atrapa modeluje zmianę w jednym procesie, nie jest rzeczywistym CDN.</p>
+    <label>Środowisko <select id="response-env"><option value="production">production</option><option value="staging">staging</option></select></label>
+    <label>Proxy <select id="response-proxy"><option value="pass">przekaż</option><option value="strip">usuń CSP</option></select></label>
+    <label>Wynik <select id="response-status"><option value="ok">200</option><option value="error">500</option></select></label>
+    <button id="response-probe">Pobierz odpowiedź</button>
+    <h3>Alert i log</h3><p>Porównaj alert dotyczący artefaktu wdrożonego i niewdrożonego. Wynik symulacji nie rozstrzyga, czy podatny kod został wykonany. Log żądania zawiera metodę, ścieżkę i wynik, a nie wartość poświadczenia.</p>
+    <button id="alert-deployed">Alert: artefakt wdrożony</button><button id="alert-not-deployed">Alert: artefakt niewdrożony</button><button id="alert-false-positive">Alert: brak zależności w inwentarzu</button>
+  </section>
+
+  <section class="output" aria-live="polite">
+    <h2>Wynik obserwacji</h2>
+    <p>Każdy przycisk pokazuje odpowiedź endpointu lub wynik statycznej kontroli.</p>
+    <pre id="result">Wybierz obserwację z aktywnego kroku.</pre>
+  </section>
+</main>
+<footer><p>OWASP Top 10 jest mapą ryzyk, nie dowodem pokrycia. Ten lokalny przykład nie zastępuje testu rzeczywistego środowiska ani własnego modelu zagrożeń.</p></footer>
+</body>
+</html>
