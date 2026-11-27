@@ -7,12 +7,17 @@ import { PkceExperiment } from './pkce.component';
 import { SecurityContextsExperiment } from './security-contexts.component';
 import { HashContentExperiment } from './hash-content.component';
 import { DocumentRelationsExperiment, RelationsChild } from './document-relations.component';
-import { CacheExperiment, HttpBoundaryExperiment, StorageExperiment } from './api-boundary-experiments.component';
+import {
+  CacheExperiment,
+  HttpBoundaryExperiment,
+  StorageExperiment,
+} from './api-boundary-experiments.component';
 
 @Component({
   selector: 'experiments-index',
   imports: [RouterLink],
-  template: '<h1>Eksperymenty</h1><ul><li><a routerLink="/example">Przykładowy eksperyment</a></li><li><a routerLink="/contexts">Konteksty i sanitizer</a></li><li><a routerLink="/dom-clobbering">DOM clobbering</a></li><li><a routerLink="/hash">Hash a zawartość</a></li><li><a routerLink="/document-relations">Dokumenty i origin</a></li><li><a routerLink="/http-boundary">HTTP: origin i żądania</a></li><li><a routerLink="/storage">Storage i cookies</a></li><li><a routerLink="/http-cache">Cache HTTP i pamięć</a></li><li><a routerLink="/rich-text">Od tekstu z API do DOM clobberingu</a></li><li><a routerLink="/pkce">Authorization Code i PKCE</a></li></ul>',
+  template:
+    '<h1>Eksperymenty</h1><ul><li><a routerLink="/example">Przykładowy eksperyment</a></li><li><a routerLink="/contexts">Konteksty i sanitizer</a></li><li><a routerLink="/dom-clobbering">DOM clobbering</a></li><li><a routerLink="/hash">Hash a zawartość</a></li><li><a routerLink="/document-relations">Dokumenty i origin</a></li><li><a routerLink="/http-boundary">HTTP: origin i żądania</a></li><li><a routerLink="/storage">Storage i cookies</a></li><li><a routerLink="/http-cache">Cache HTTP i pamięć</a></li><li><a routerLink="/rich-text">Od tekstu z API do DOM clobberingu</a></li><li><a routerLink="/pkce">Authorization Code i PKCE</a></li></ul>',
 })
 class ExperimentsIndex {}
 

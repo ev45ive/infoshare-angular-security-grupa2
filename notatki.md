@@ -34,3 +34,12 @@ type NotFood = Food & 'bike';
 
 - Literal union types (compile-time only)
 - enums (+runtime)
+
+
+# Lazy loading angular code - CSP?
+
+```ts
+  { path: '', loadChildren: () => import('separate-bundler') },
+  { path: '', loadChildren: () => fetch('separate-bundler') },
+  onCLick() {  await import('separate-bundler').MojSuperComponent }
+```
